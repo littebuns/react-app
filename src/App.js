@@ -1,33 +1,37 @@
-import React, { createRef } from "react";
+import React from "react";
 
-class Counter extends React.Component {
-  msgRef = createRef();
+class App extends React.Component {
+  constructor() {
+    super();
+    console.log('constructor');
+  }
 
-  getValue = () => {
-    console.log(this.msgRef.current.value);
-  };
+  state = {
+    count: 0
+  }
+
+  addCount = ()=>{
+    this.setState({
+      count: this.state.count + 1
+    })
+  }
+
+
+  componentDidMount(){
+    // 类似于 vue 的 mount ajax
+    console.log('componentDidMount');
+  }
 
   render() {
     return (
-      <>
-        <input
-          type="text"
-          ref={this.msgRef}
-        />
-        <button onClick={this.getValue}>
-          点击获取值
-        </button>
-      </>
+      <div className="App">
+        {console.log('render')}
+        {this.state.count}
+        <button onClick={this.addCount}>增加</button>
+      </div>
     );
   }
 }
 
-function App() {
-  return (
-    <div className="App">
-      <Counter />
-    </div>
-  );
-}
 
 export default App;
