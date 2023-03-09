@@ -1,20 +1,21 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import Home from "./router/Home";
-import About from "./router/About";
-import Login from "./router/Login";
+
+import { createClient } from '@supabase/supabase-js';
+
 
 function App() {
+
+  const supabase = createClient('http://192.168.93.16:8000', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYwMzk2ODgzNCwiZXhwIjoyNTUwNjUzNjM0LCJyb2xlIjoic2VydmljZV9yb2xlIn0.necIJaiP7X2T2QjGeV-FhpkizcNTX8HjDDBAxpgQTEI');
+
+  async function getDatas() {
+    const countries = await supabase.from('address').select()
+    console.log(countries)
+  }
+
+  getDatas();
   return (
-    <BrowserRouter>
-      <Link to="/">首页</Link>
-      <Link to="/about">关于</Link>
-      <Link to="/login">登录</Link>
-      <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/about" element={<About />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-      </Routes>
-    </BrowserRouter>
+    <div>
+
+    </div>
   );
 }
 
