@@ -1,7 +1,16 @@
 const {range,map} = require('lodash')
 const dayjs = require('dayjs')
-console.log(dayjs());
-const months = map(range(1, 13), (i) =>
-  dayjs().subtract(i, "month").format("YYYYMM")
-);
-console.log(months);
+
+
+const currentYear = dayjs().year();
+const currentMonth = dayjs().month();
+
+const yearMoth = range(0, currentMonth + 1).map(
+    (i)=>{
+        return dayjs().set('year', currentYear).set('month', i).format('YYYYMM')
+    }
+)
+console.log(yearMoth);
+
+
+console.log(dayjs().set('year', currentYear).set('month', 1).format('YYYYMM'));
