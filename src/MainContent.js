@@ -1,5 +1,6 @@
-import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { Layout, Menu, theme } from "antd";
 import { useState } from "react";
+import { useNavigate, Routes, Route } from "react-router-dom";
 import {
   FileOutlined,
   PieChartOutlined,
@@ -7,6 +8,8 @@ import {
   DesktopOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
+import Select from "./Select";
+import Step from "./Step"
 
 const { Content, Sider } = Layout;
 
@@ -18,6 +21,7 @@ function getItem(label, key, icon, children) {
     label,
   };
 }
+
 const items = [
   getItem("Option 1", "1", <PieChartOutlined />),
   getItem("Option 2", "2", <DesktopOutlined />),
@@ -26,14 +30,21 @@ const items = [
     getItem("Bill", "4"),
     getItem("Alex", "5"),
   ]),
-  getItem("Team", "sub2", <TeamOutlined />, [
-    getItem("Team 1", "6"),
-    getItem("Team 2", "8"),
+  getItem("Ant Design 组件", "sub2", <TeamOutlined />, [
+    getItem("Select 组件", "/select"),
+    getItem("Step 组件", "/Step"),
   ]),
   getItem("Files", "9", <FileOutlined />),
 ];
 
 function MainContent() {
+  const navigate = useNavigate();
+
+  const menuClick = (e) => {
+    console.log(e.key);
+    navigate(e.key, {replace:true});
+  };
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -57,30 +68,27 @@ function MainContent() {
             defaultSelectedKeys={["1"]}
             mode="inline"
             items={items}
+            onClick={menuClick}
           />
         </Sider>
         <Layout className="site-layout">
-
           <Content
             style={{
               margin: "0 16px",
             }}
           >
-            <Breadcrumb
-              style={{
-                margin: "16px 0",
-              }}
-            >
-              <Breadcrumb.Item>User</Breadcrumb.Item>
-              <Breadcrumb.Item>Bill</Breadcrumb.Item>
-            </Breadcrumb>
             <div
               style={{
                 padding: 24,
-                minHeight: 360,
+                minHeight: 800,
                 background: colorBgContainer,
               }}
             >
+              <Routes>
+                <Route path="/select" element={<Select />}></Route>
+                <Route path="/step" element={<Step />}></Route>
+
+              </Routes>
             </div>
           </Content>
         </Layout>

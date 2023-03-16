@@ -1,7 +1,11 @@
 import MainContent from "./MainContent";
+import { BrowserRouter } from "react-router-dom";
+
 function App() {
   return (
-    <MainContent/>
+    <BrowserRouter>
+      <MainContent />
+    </BrowserRouter>
   );
 }
 
