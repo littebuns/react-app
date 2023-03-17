@@ -8,8 +8,9 @@ import {
   DesktopOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
-import Select from "./Select";
-import Step from "./Step"
+import Select from "./antd/Select";
+import Step from "./antd/Step";
+import AgGridDemon from './package/dataGrid/demon';
 
 const { Content, Sider } = Layout;
 
@@ -25,8 +26,8 @@ function getItem(label, key, icon, children) {
 const items = [
   getItem("Option 1", "1", <PieChartOutlined />),
   getItem("Option 2", "2", <DesktopOutlined />),
-  getItem("User", "sub1", <UserOutlined />, [
-    getItem("Tom", "3"),
+  getItem("AgGrid", "/agGrid", <UserOutlined />, [
+    getItem("AgGrid demon", "/agGrid"),
     getItem("Bill", "4"),
     getItem("Alex", "5"),
   ]),
@@ -87,6 +88,8 @@ function MainContent() {
               <Routes>
                 <Route path="/select" element={<Select />}></Route>
                 <Route path="/step" element={<Step />}></Route>
+                <Route path="/agGrid" element={<AgGridDemon />}></Route>
+
 
               </Routes>
             </div>
