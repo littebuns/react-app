@@ -26,7 +26,7 @@ function getItem(label, key, icon, children) {
 const items = [
   getItem("Option 1", "1", <PieChartOutlined />),
   getItem("Option 2", "2", <DesktopOutlined />),
-  getItem("AgGrid", "/agGrid", <UserOutlined />, [
+  getItem("AgGrid", "/agGridDemon", <UserOutlined />, [
     getItem("AgGrid demon", "/agGrid"),
     getItem("Bill", "4"),
     getItem("Alex", "5"),
@@ -89,8 +89,6 @@ function MainContent() {
                 <Route path="/select" element={<Select />}></Route>
                 <Route path="/step" element={<Step />}></Route>
                 <Route path="/agGrid" element={<AgGridDemon />}></Route>
-
-
               </Routes>
             </div>
           </Content>
