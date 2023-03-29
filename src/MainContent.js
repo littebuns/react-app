@@ -11,6 +11,7 @@ import {
 import Select from "./antd/Select";
 import Step from "./antd/Step";
 import AgGridDemon from './package/dataGrid/demon';
+import AgGridColumnDef from './package/dataGrid/columnDefinitions'
 
 const { Content, Sider } = Layout;
 
@@ -28,7 +29,7 @@ const items = [
   getItem("Option 2", "2", <DesktopOutlined />),
   getItem("AgGrid", "/agGridDemon", <UserOutlined />, [
     getItem("AgGrid demon", "/agGrid"),
-    getItem("Bill", "4"),
+    getItem("AgGrid Column Definitions", "/agGrid-columnDef"),
     getItem("Alex", "5"),
   ]),
   getItem("Ant Design 组件", "sub2", <TeamOutlined />, [
@@ -89,6 +90,7 @@ function MainContent() {
                 <Route path="/select" element={<Select />}></Route>
                 <Route path="/step" element={<Step />}></Route>
                 <Route path="/agGrid" element={<AgGridDemon />}></Route>
+                <Route path="/agGrid-columnDef" element={<AgGridColumnDef/>}></Route>
               </Routes>
             </div>
           </Content>
