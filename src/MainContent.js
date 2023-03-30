@@ -11,7 +11,7 @@ import {
 import Select from "./antd/Select";
 import Step from "./antd/Step";
 import AgGridDemon from './package/dataGrid/demon';
-import AgGridColumnDef from './package/dataGrid/columnDefinitions'
+import ColumnDefinitions from './package/dataGrid/ColumnDefinitions'
 
 const { Content, Sider } = Layout;
 
@@ -90,7 +90,7 @@ function MainContent() {
                 <Route path="/select" element={<Select />}></Route>
                 <Route path="/step" element={<Step />}></Route>
                 <Route path="/agGrid" element={<AgGridDemon />}></Route>
-                <Route path="/agGrid-columnDef" element={<AgGridColumnDef/>}></Route>
+                <Route path="/agGrid-columnDef" element={<ColumnDefinitions/>}></Route>
               </Routes>
             </div>
           </Content>

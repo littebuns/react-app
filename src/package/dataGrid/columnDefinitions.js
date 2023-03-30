@@ -5,34 +5,32 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 
 function ColumnDefinitions() {
   const [rowData, setRowData] = useState();
-
   const [columnDefs] = useState([
     // using default ColDef
-    { field: 'athlete' },
-    { field: 'sport' },
+    { field: "athlete" },
+    { field: "sport" },
     // using number column type
-    { field: 'age', type: 'numberColumn' },
-    { field: 'year', type: 'numberColumn' },
+    { field: "age", type: "numberColumn" },
+    { field: "year", type: "numberColumn" },
     // using date and non-editable column types
-    { field: 'date', type: ['dateColumn', 'nonEditableColumn'], width: 220 },
+    { field: "date", type: ["dateColumn", "nonEditableColumn"], width: 220 },
     {
-      headerName: 'Medals',
-      groupId: 'medalsGroup',
+      headerName: "Medals",
+      groupId: "medalsGroup",
       children: [
         // using medal column type
-        { headerName: 'Gold', field: 'gold', type: 'medalColumn' },
-        { headerName: 'Silver', field: 'silver', type: 'medalColumn' },
-        { headerName: 'Bronze', field: 'bronze', type: 'medalColumn' },
+        { headerName: "Gold", field: "gold", type: "medalColumn" },
+        { headerName: "Silver", field: "silver", type: "medalColumn" },
+        { headerName: "Bronze", field: "bronze", type: "medalColumn" },
         {
-          headerName: 'Total',
-          field: 'total',
-          type: 'medalColumn',
-          columnGroupShow: 'closed',
+          headerName: "Total",
+          field: "total",
+          type: "medalColumn",
+          columnGroupShow: "closed",
         },
       ],
     },
   ]);
-
   const defaultColDef = useMemo(() => {
     return {
       // set the default column width
@@ -92,14 +90,16 @@ function ColumnDefinitions() {
   }, []);
 
   return (
-    <AgGridReact
-      rowData={rowData}
-      columnDefs={columnDefs}
-      defaultColDef={defaultColDef}
-      defaultColGroupDef={defaultColGroupDef}
-      columnTypes={columnTypes}
-      onGridReady={onGridReady}
-    ></AgGridReact>
+    <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
+      <AgGridReact
+        rowData={rowData}
+        columnDefs={columnDefs}
+        defaultColDef={defaultColDef}
+        defaultColGroupDef={defaultColGroupDef}
+        columnTypes={columnTypes}
+        onGridReady={onGridReady}
+      ></AgGridReact>
+    </div>
   );
 }
 
