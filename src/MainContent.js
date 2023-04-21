@@ -12,6 +12,7 @@ import Select from "./antd/Select";
 import Step from "./antd/Step";
 import AgGridDemon from './package/dataGrid/demon';
 import ColumnDefinitions from './package/dataGrid/ColumnDefinitions'
+import ShoppingCart from './base/hook/useContext/ShoppingCart'
 
 const { Content, Sider } = Layout;
 
@@ -37,6 +38,9 @@ const items = [
     getItem("Step 组件", "/Step"),
   ]),
   getItem("Files", "9", <FileOutlined />),
+  getItem("hooks", "/hooks", <UserOutlined />, [
+    getItem("useContext", "/useContext"),
+  ]),
 ];
 
 function MainContent() {
@@ -91,6 +95,8 @@ function MainContent() {
                 <Route path="/step" element={<Step />}></Route>
                 <Route path="/agGrid" element={<AgGridDemon />}></Route>
                 <Route path="/agGrid-columnDef" element={<ColumnDefinitions/>}></Route>
+                <Route path="/useContext" element={<ShoppingCart/>}></Route>
+
               </Routes>
             </div>
           </Content>
