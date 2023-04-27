@@ -12,7 +12,9 @@ import Select from "./antd/Select";
 import Step from "./antd/Step";
 import AgGridDemon from './package/dataGrid/demon';
 import ColumnDefinitions from './package/dataGrid/ColumnDefinitions'
-import ShoppingCart from './base/hook/useContext/ShoppingCart'
+import ShoppingCart from './base/hook/useContext/ShoppingCart';
+import Video from './package/other/VideoDemon';
+import Tab from "./antd/Tab";
 
 const { Content, Sider } = Layout;
 
@@ -36,8 +38,11 @@ const items = [
   getItem("Ant Design 组件", "sub2", <TeamOutlined />, [
     getItem("Select 组件", "/select"),
     getItem("Step 组件", "/Step"),
+    getItem('Tab 组件', "/tab")
   ]),
-  getItem("Files", "9", <FileOutlined />),
+  getItem("Files", "9", <FileOutlined />,[
+    getItem("Video", "/video")
+  ]),
   getItem("hooks", "/hooks", <UserOutlined />, [
     getItem("useContext", "/useContext"),
   ]),
@@ -96,6 +101,8 @@ function MainContent() {
                 <Route path="/agGrid" element={<AgGridDemon />}></Route>
                 <Route path="/agGrid-columnDef" element={<ColumnDefinitions/>}></Route>
                 <Route path="/useContext" element={<ShoppingCart/>}></Route>
+                <Route path="/video" element={<Video/>}></Route>
+                <Route path='/tab' element={<Tab/>}></Route>
 
               </Routes>
             </div>
