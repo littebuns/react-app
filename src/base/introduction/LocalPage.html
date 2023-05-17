@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <!-- 这个是 react 核心文件库 -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <!-- 这个库的作用是将 react 创建的虚拟 DOM 转化为真实 DOM -->
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Don't use this in production: -->
+    <!-- 这个库是为了使用 JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- <script> 标签添加 text/babel 属性 就可以在标签内使用 JSX -->
+    <script type="text/babel">
+      function MyApp() {
+        return <h1>Hello, world!</h1>;
+      }
+
+      const container = document.getElementById("root");
+      //在 DOM 容器上创建一个根节点 root
+      const root = ReactDOM.createRoot(container);
+      //将 <MyApp/> 组件渲染到 root 根节点上
+      root.render(<MyApp />);
+    </script>
+    <!--
+      Note: this page is a great way to try React but it's not suitable for production.
+      It slowly compiles JSX with Babel in the browser and uses a large development build of React.
+
+      Read this page for starting a new React project with JSX:
+      https://react.dev/learn/start-a-new-react-project
+
+      Read this page for adding React with JSX to an existing project:
+      https://react.dev/learn/add-react-to-an-existing-project
+    -->
+  </body>
+</html>
