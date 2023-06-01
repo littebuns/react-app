@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <h1>Ajax</h1>
+      <button class="btn-primary" id="btn">发送请求</button>
+    </div>
+
+    <script>
+      const btn = document.querySelector("#btn");
+      btn.addEventListener("click", () => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("get", "https://v1.hitokoto.cn/");
+        xhr.send();
+        xhr.onreadystatechange = () => {
+          const p = new Promise((resolve, reject) => {
+            if (xhr.readyState === 4) {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                resolve(xhr.response)
+              } else {
+                reject(xhr.status)
+              }
+            }
+          });
+          p.then((data)=>{
+            console.log(data);
+          }, (reason)=>{
+            console.log(reason);
+          })
+          //   if (xhr.readyState === 4) {
+          //     if (xhr.status >= 200 && xhr.status < 300) {
+          //       console.log(xhr.response);
+          //     } else {
+          //       console.log(xhr.status);
+          //     }
+          //   }
+        };
+      });
+    </script>
+  </body>
+</html>
