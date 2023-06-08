@@ -1,20 +1,18 @@
-import { Layout, Menu, theme } from "antd";
-import { useState } from "react";
-import { useNavigate, Routes, Route } from "react-router-dom";
 import {
-  FileOutlined,
-  PieChartOutlined,
-  UserOutlined,
-  DesktopOutlined,
-  TeamOutlined,
+  DesktopOutlined, FileOutlined,
+  PieChartOutlined, TeamOutlined, UserOutlined
 } from "@ant-design/icons";
+import { Layout, Menu, theme } from "antd";
+import { ResizePanel } from "package/react-resizable-panels";
+import { useState } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Select from "./antd/Select";
 import Step from "./antd/Step";
-import AgGridDemon from './package/dataGrid/demon';
-import ColumnDefinitions from './package/dataGrid/ColumnDefinitions'
-import ShoppingCart from './base/hook/useContext/ShoppingCart';
-import Video from './package/other/VideoDemon';
 import Tab from "./antd/Tab";
+import ShoppingCart from './js/react/hook/useContext/ShoppingCart';
+import ColumnDefinitions from './package/dataGrid/ColumnDefinitions';
+import AgGridDemon from './package/dataGrid/demon';
+import Video from './package/other/VideoDemon';
 
 const { Content, Sider } = Layout;
 
@@ -46,6 +44,9 @@ const items = [
   getItem("hooks", "/hooks", <UserOutlined />, [
     getItem("useContext", "/useContext"),
   ]),
+  getItem("js-package", "/jsPackage", <DesktopOutlined />,[
+    getItem("react-resized-panels", "/resizePanel")
+  ])
 ];
 
 function MainContent() {
@@ -103,7 +104,7 @@ function MainContent() {
                 <Route path="/useContext" element={<ShoppingCart/>}></Route>
                 <Route path="/video" element={<Video/>}></Route>
                 <Route path='/tab' element={<Tab/>}></Route>
-
+                <Route path='/resizePanel' element={<ResizePanel/>}></Route>
               </Routes>
             </div>
           </Content>
