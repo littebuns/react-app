@@ -19,7 +19,7 @@
       const object = {
         color: 'blue',
       };
-      //将
+      //将 getColor 中的 this 指向 object
       const newGetColor = getColor.bind(object)
       newGetColor()
     </script>

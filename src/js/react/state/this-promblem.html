@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      class Person {
+        speak() {
+          console.log(this);
+        }
+        listen() {
+          speak();
+        }
+      }
+
+      const p1 = new Person();
+      p1.speak();
+      p1.listen();
+
+      const x = p1.speak;
+      //直接调用
+      x();
+    </script>
+  </body>
+</html>

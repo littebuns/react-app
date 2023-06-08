@@ -10,28 +10,39 @@
   <body>
     <div id="root"></div>
     <script type="text/babel">
-      class MyApp extends React.Component {
-
-        constructor(){
-            super();
-            this.state = {isHot: true}
-            this.changeWeather = this.changeWeather.bind(this)
+      class Weather extends React.Component {
+        constructor() {
+          // 构造器中的 this 指向实例对象
+          super();
+          console.log(this);
+          this.state = { isHot: true };
+          // 为了能让 changeWeather 方法访问到实例对象 通过 bind 去修改 changeWeather 中的 this 指向
+          this.changeWeather = this.changeWeather.bind(this);
         }
 
-        changeWeather(){
-            console.log(this);
-            this.state.isHot = !this.state.isHot;
+        // changeWeather 放在了 Weaher 的原型对象上  供实例使用
+        changeWeather() {
+          // 只有通过该实例调用changeWeather
+          console.log(this);
+          // 只有使用 setState 能触发 render 函数重新渲染
+          this.setState({ isHot: !this.state.isHot });
         }
 
         render() {
-          return <h1 onClick={this.changeWeather}>今天天气{this.state.isHot?'炎热':'凉爽'}</h1>;
-        }
+          return (
+            // render 中 this 指向实例对象
 
+            // 想要调用 Weather 类中的 changeWeather 方法 必须通过实例对象去调用 ，否则找不到该方法
+            <h1 onClick={this.changeWeather}>
+              今天天气{this.state.isHot ? "炎热" : "凉爽"}
+            </h1>
+          );
+        }
       }
 
       const container = document.getElementById("root");
       const root = ReactDOM.createRoot(container);
-      root.render(<MyApp />);
+      root.render(<Weather />);
     </script>
   </body>
 </html>
