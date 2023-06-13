@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <!-- 这个是 react 核心文件库 -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <!-- 这个库的作用是将 react 创建的虚拟 DOM 转化为真实 DOM -->
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Don't use this in production: -->
+    <!-- 这个库是为了使用 JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="div1"></div>
+    <div id="div2"></div>
+    <div id="div3"></div>
+    <!-- <script> 标签添加 text/babel 属性 就可以在标签内使用 JSX -->
+    <script type="text/babel">
+      class Person extends React.Component {
+        render() {
+          return (
+            <ul>
+              <li>name: {this.props.name}</li>
+              <li>age: {this.props.age + 1}</li>
+              <li>sex: {this.props.sex}</li>
+            </ul>
+          );
+        }
+      }
+
+      const container1 = document.getElementById("div1");
+      const container2 = document.getElementById("div2");
+      const container3 = document.getElementById("div3");
+
+      //在 DOM 容器上创建一个根节点 root
+      const root1 = ReactDOM.createRoot(container1);
+      const root2 = ReactDOM.createRoot(container2);
+      const root3 = ReactDOM.createRoot(container3);
+
+      const person = { name: "小徐", age: 18, sex: "男" };
+      //将 <MyApp/> 组件渲染到 root 根节点上
+      //   babel 支持在标签对象上使用 ... 展开对象
+      root1.render(<Person {...person} />);
+      root2.render(<Person {...person} />);
+
+      //   这里给18字符串会有问题
+      //   root3.render(<Person name="小晓" age="18" sex="女"/>);
+      root3.render(<Person name="小晓" age={18} sex="女" />);
+
+      //   root.render(<Person {...person}/>);
+    </script>
+    <!--
+     Note: this page is a great way to try React but it's not suitable for production.
+     It slowly compiles JSX with Babel in the browser and uses a large development build of React.
+
+     Read this page for starting a new React project with JSX:
+     https://react.dev/learn/start-a-new-react-project
+
+     Read this page for adding React with JSX to an existing project:
+     https://react.dev/learn/add-react-to-an-existing-project
+   -->
+  </body>
+</html>

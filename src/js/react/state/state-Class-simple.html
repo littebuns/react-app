@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      class Weather extends React.Component {
+        state = { isHot: true };
+
+        // 函数表达式加匿名函数会正确的指向组件实例  因为箭头函数不会创建自己的 this 指向 而是直接继承当前上下文的 this 值
+        changeWeather = ()=> {
+          this.setState({ isHot: !this.state.isHot });
+        }
+
+        render() {
+          return (
+            <h1 onClick={this.changeWeather}>
+              今天天气{this.state.isHot ? "炎热" : "凉爽"}
+            </h1>
+          );
+        }
+      }
+
+      const container = document.getElementById("root");
+      const root = ReactDOM.createRoot(container);
+      root.render(<Weather />);
+    </script>
+  </body>
+</html>
