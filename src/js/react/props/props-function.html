@@ -13,30 +13,26 @@
     <div id="div1"></div>
 
     <script type="text/babel">
-      class Person extends React.Component {
+      const Person = ({ name, age, sex }) => {
+        return (
+          <ul>
+            <li>name: {name}</li>
+            <li>age: {age + 1}</li>
+            <li>sex: {sex}</li>
+          </ul>
+        );
+      };
+      Person.propTypes = {
+        name: PropTypes.string.isRequired,
+        age: PropTypes.number,
+        sex: PropTypes.string,
+        // 对方法进行限制
+        speak: PropTypes.func,
+      };
 
-        static propTypes = {
-            name: PropTypes.string.isRequired,
-            age: PropTypes.number,
-            sex: PropTypes.string,
-            // 对方法进行限制
-            speak: PropTypes.func,
-        }
-
-        static defaultProps = {
-            sex: "不男不女",
-        }
-
-        render() {
-          return (
-            <ul>
-              <li>name: {this.props.name}</li>
-              <li>age: {this.props.age + 1}</li>
-              <li>sex: {this.props.sex}</li>
-            </ul>
-          );
-        }
-      }
+      Person.defaultProps = {
+        sex: "不男不女",
+      };
 
       function speak() {
         console.log("speak");
