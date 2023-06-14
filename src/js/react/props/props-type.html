@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- 引入 prop-types 包对props进行限制 -->
+    <script src="https://unpkg.com/prop-types@15.6/prop-types.js"></script>
+  </head>
+  <body>
+    <div id="div1"></div>
+
+    <script type="text/babel">
+      class Person extends React.Component {
+        render() {
+          return (
+            <ul>
+              <li>name: {this.props.name}</li>
+              <li>age: {this.props.age + 1}</li>
+              <li>sex: {this.props.sex}</li>
+            </ul>
+          );
+        }
+      }
+
+      // 标签属性值限制
+      Person.propTypes = {
+        name: PropTypes.string.isRequired,
+        age: PropTypes.number,
+        sex: PropTypes.string,
+        // 对方法进行限制
+        speak: PropTypes.func
+      };
+
+      // 默认值设置
+      Person.defaultProps = {
+        sex: "不男不女",
+      };
+
+      function speak(){
+        console.log('speak');
+      }
+
+      const container1 = document.getElementById("div1");
+      const root1 = ReactDOM.createRoot(container1);
+
+      const person = { name: "小徐", age: 18 };
+      root1.render(<Person {...person} speak={speak} />);
+    </script>
+  </body>
+</html>
