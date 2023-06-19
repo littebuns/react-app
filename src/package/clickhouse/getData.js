@@ -107,6 +107,7 @@ function evaluate(code, context_data) {
   } catch (e) {
     errors.push(e.message);
   }
+  console.log({ value, value_ytd, value_avg });
   return {
     result: { value, value_ytd, value_avg },
     error: errors.join(","),
@@ -115,10 +116,10 @@ function evaluate(code, context_data) {
 }
 
 let formula =
-  "平均营业收入*12/平均货币资金";
+  "净利润 +( 财务费用-汇兑损益 -( 投资收益-汇率套保工具损益 + 公允价值变动损益汇率套保工具损益 ))*0.75";
 async function getData() {
   const { data } = await ch.querying(
-    "select * from rp_manager.v_bpc_sap_pre_index vbspi where year = '2023' and prod ='total' and branch ='宁波公司' and ym = '202301' and acc in ('营业收入', '货币资金')"
+    "select * from rp_manager.v_bpc_sap_pre_index vbspi where year = '2023' and branch ='东华集装箱' and ym = '202304' and acc in ('净利润','财务费用-汇兑损益','投资收益-汇率套保工具损益','公允价值变动损益汇率套保工具损益')"
   );
   let result = groupBy(
     data,
@@ -137,7 +138,7 @@ async function getData() {
       error,
       context,
     } = evaluate(formula, context_data);
-    console.log(value);
+    console.log({ value, value_ytd, value_avg });
   });
 }
 

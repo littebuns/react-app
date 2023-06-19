@@ -3,6 +3,7 @@ import {
   PieChartOutlined, TeamOutlined, UserOutlined
 } from "@ant-design/icons";
 import { Layout, Menu, theme } from "antd";
+import { TableGroup } from "antd/TableGroup";
 import { ResizePanel } from "package/react-resizable-panels";
 import { useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
@@ -36,7 +37,8 @@ const items = [
   getItem("Ant Design 组件", "sub2", <TeamOutlined />, [
     getItem("Select 组件", "/select"),
     getItem("Step 组件", "/Step"),
-    getItem('Tab 组件', "/tab")
+    getItem('Tab 组件', "/tab"),
+    getItem('组合组件', "/group1")
   ]),
   getItem("Files", "9", <FileOutlined />,[
     getItem("Video", "/video")
@@ -105,6 +107,7 @@ function MainContent() {
                 <Route path="/video" element={<Video/>}></Route>
                 <Route path='/tab' element={<Tab/>}></Route>
                 <Route path='/resizePanel' element={<ResizePanel/>}></Route>
+                <Route path='/group1' element={<TableGroup/>}></Route>
               </Routes>
             </div>
           </Content>
