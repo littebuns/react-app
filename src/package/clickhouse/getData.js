@@ -7,8 +7,9 @@ const {
   map,
   startsWith,
   replace,
-  words
+  words,
 } = require("lodash");
+const { bool } = require("prop-types");
 // node .\src\package\clickhouse\getData.js
 
 const options = {
@@ -29,6 +30,14 @@ function evaluate(code, context_data) {
   const context = {};
 
   const setContext = (acc, name = "") => {
+    // 用双引号包裹的先去除
+    let mark = false;
+    if (/'.*?'/.test(acc)) {
+      acc = acc.replaceAll("'", "");
+      mark = true;
+    }
+    console.log(acc);
+
     let valObj;
     if (context_data[acc]) {
       valObj = context_data[acc];
@@ -43,9 +52,19 @@ function evaluate(code, context_data) {
         valObj = context_data[key];
       }
     }
-
+    console.log(valObj);
+    /**
+     * 第一种情况是在 context_data 中直接找到
+     * 第二种是没找到 ''包裹住 视为整体0
+     * 第三种单个acc没找到 视为0
+     */
     if (valObj) {
       context[name || acc] = valObj;
+    } else if (mark) {
+      valObj = true;
+      context[name || acc] = { value: 0, value_ytd: 0, value_avg: 0 };
+    } else {
+      context[name || acc] = { value: 0, value_ytd: 0, value_avg: 0 };
     }
     // console.log(valObj);
     return valObj;
@@ -53,11 +72,11 @@ function evaluate(code, context_data) {
   code = map(code.split(" "), (item, index) => {
     if (item) {
       let name = "";
-      if(startsWith(item,'平均')){
-        name = `平均_${index}`
-      }else if(startsWith(item,'年化')){
-        name = `年化_${index}`
-      }else{
+      if (startsWith(item, "平均")) {
+        name = `平均_${index}`;
+      } else if (startsWith(item, "年化")) {
+        name = `年化_${index}`;
+      } else {
         name = `_${index}`;
       }
       // console.log(item);
@@ -116,10 +135,10 @@ function evaluate(code, context_data) {
 }
 
 let formula =
-  "净利润 +( 财务费用-汇兑损益 -( 投资收益-汇率套保工具损益 + 公允价值变动损益汇率套保工具损益 ))*0.75";
+  "净利润 +( '财务费用-汇兑损益' -( '投资收益-汇率套保工具损益' + 公允价值变动损益汇率套保工具损益 ))*0.75";
 async function getData() {
   const { data } = await ch.querying(
-    "select * from rp_manager.v_bpc_sap_pre_index vbspi where year = '2023' and branch ='东华集装箱' and ym = '202304' and acc in ('净利润','财务费用-汇兑损益','投资收益-汇率套保工具损益','公允价值变动损益汇率套保工具损益')"
+    "select * from rp_manager.v_bpc_sap_pre_index vbspi where year = '2023' and branch ='振华物流集团' and ym = '202301' and acc in ('净利润','财务费用','汇兑损益','财务费用-汇兑损益','投资收益-汇率套保工具损益','公允价值变动损益汇率套保工具损益', '投资收益', '汇率套保工具损益')"
   );
   let result = groupBy(
     data,
@@ -132,7 +151,7 @@ async function getData() {
         context_data[acc] = { value, value_ytd, value_avg };
       })
       .value();
-    // console.log(context_data);
+    console.log(context_data);
     const {
       result: { value, value_ytd, value_avg },
       error,
