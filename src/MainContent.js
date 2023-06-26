@@ -4,7 +4,7 @@ import {
 } from "@ant-design/icons";
 import { Layout, Menu, theme } from "antd";
 import { TableGroup } from "antd/TableGroup";
-import { AxiosRequest } from "package/axios";
+import { AxiosRequest } from "package/proxy";
 import { ResizePanel } from "package/react-resizable-panels";
 import { useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
