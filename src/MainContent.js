@@ -4,6 +4,7 @@ import {
 } from "@ant-design/icons";
 import { Layout, Menu, theme } from "antd";
 import { TableGroup } from "antd/TableGroup";
+import { AxiosRequest } from "package/axios";
 import { ResizePanel } from "package/react-resizable-panels";
 import { useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
@@ -47,7 +48,8 @@ const items = [
     getItem("useContext", "/useContext"),
   ]),
   getItem("js-package", "/jsPackage", <DesktopOutlined />,[
-    getItem("react-resized-panels", "/resizePanel")
+    getItem("react-resized-panels", "/resizePanel"),
+    getItem("本地代理", "/proxy")
   ])
 ];
 
@@ -108,6 +110,7 @@ function MainContent() {
                 <Route path='/tab' element={<Tab/>}></Route>
                 <Route path='/resizePanel' element={<ResizePanel/>}></Route>
                 <Route path='/group1' element={<TableGroup/>}></Route>
+                <Route path='/proxy' element={<AxiosRequest/>}></Route>
               </Routes>
             </div>
           </Content>
