@@ -4,6 +4,7 @@ import {
 } from "@ant-design/icons";
 import { Layout, Menu, theme } from "antd";
 import { TableGroup } from "antd/TableGroup";
+import { Jexcel } from "package/jspreadsheet";
 import { AxiosRequest } from "package/proxy";
 import { ResizePanel } from "package/react-resizable-panels";
 import { useState } from "react";
@@ -49,7 +50,8 @@ const items = [
   ]),
   getItem("js-package", "/jsPackage", <DesktopOutlined />,[
     getItem("react-resized-panels", "/resizePanel"),
-    getItem("本地代理", "/proxy")
+    getItem("本地代理", "/proxy"),
+    getItem("jexecl", "/jexecl")
   ])
 ];
 
@@ -111,6 +113,7 @@ function MainContent() {
                 <Route path='/resizePanel' element={<ResizePanel/>}></Route>
                 <Route path='/group1' element={<TableGroup/>}></Route>
                 <Route path='/proxy' element={<AxiosRequest/>}></Route>
+                <Route path='/jexecl' element={<Jexcel/>}></Route>
               </Routes>
             </div>
           </Content>
