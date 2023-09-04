@@ -135,10 +135,10 @@ function evaluate(code, context_data) {
 }
 
 let formula =
-  "净利润 +( '财务费用-汇兑损益' -( '投资收益-汇率套保工具损益' + 公允价值变动损益汇率套保工具损益 ))*0.75";
+  "财务费用 - 汇兑损益";
 async function getData() {
   const { data } = await ch.querying(
-    "select * from rp_manager.v_bpc_sap_pre_index vbspi where year = '2023' and branch ='振华物流集团' and ym = '202301' and acc in ('净利润','财务费用','汇兑损益','财务费用-汇兑损益','投资收益-汇率套保工具损益','公允价值变动损益汇率套保工具损益', '投资收益', '汇率套保工具损益')"
+    "select * from rp_manager.v_bpc_sap_pre_index vbspi where year = '2023' and branch ='物流板块' and ym = '202306' and acc in ('净利润','财务费用','汇兑损益','财务费用-汇兑损益','投资收益-汇率套保工具损益','公允价值变动损益汇率套保工具损益', '投资收益', '汇率套保工具损益')"
   );
   let result = groupBy(
     data,

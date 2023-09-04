@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext, useState } from "react";
 
 // 创建购物车上下文
 const CartContext = React.createContext();
@@ -57,6 +57,9 @@ function Cart() {
       {cartItems.map((item) => (
         <CartItem key={item.id} item={item} />
       ))}
+
+<iframe src="http://localhost:4000/gateway/quickbi/token3rd/dashboard/view/pc.htm?pageId=572501ec-5164-4ee8-b2b8-1b6ae1988fb0&accessToken=e16459cb0c0fce315d14e678cd16eb97&dd_orientation=auto" width={1000} height={1000} ></iframe>
+
     </div>
   );
 }
