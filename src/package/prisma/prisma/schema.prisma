@@ -1,0 +1,616 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model actor {
+  actor_id    Int          @id @default(autoincrement())
+  first_name  String       @db.VarChar(45)
+  last_name   String       @db.VarChar(45)
+  last_update DateTime     @default(now()) @db.Timestamp(6)
+  fullname    String?      @default(dbgenerated("(((first_name)::text || ' '::text) || (last_name)::text)")) @db.VarChar(90)
+  film_actor  film_actor[]
+
+  @@index([last_name], map: "idx_actor_last_name")
+}
+
+model address {
+  address_id  Int        @id @default(autoincrement())
+  address     String     @db.VarChar(50)
+  address2    String?    @db.VarChar(50)
+  district    String     @db.VarChar(20)
+  city_id     Int        @db.SmallInt
+  postal_code String?    @db.VarChar(10)
+  phone       String     @db.VarChar(20)
+  last_update DateTime   @default(now()) @db.Timestamp(6)
+  city        city       @relation(fields: [city_id], references: [city_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_address_city")
+  customer    customer[]
+  staff       staff[]
+  store       store[]
+
+  @@index([city_id], map: "idx_fk_city_id")
+}
+
+model category {
+  category_id   Int             @id @default(autoincrement())
+  name          String          @db.VarChar(25)
+  last_update   DateTime        @default(now()) @db.Timestamp(6)
+  film_category film_category[]
+}
+
+model city {
+  city_id     Int       @id @default(autoincrement())
+  city        String    @db.VarChar(50)
+  country_id  Int       @db.SmallInt
+  last_update DateTime  @default(now()) @db.Timestamp(6)
+  address     address[]
+  country     country   @relation(fields: [country_id], references: [country_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_city")
+
+  @@index([country_id], map: "idx_fk_country_id")
+}
+
+model country {
+  country_id  Int      @id @default(autoincrement())
+  country     String   @db.VarChar(50)
+  last_update DateTime @default(now()) @db.Timestamp(6)
+  city        city[]
+}
+
+model customer {
+  customer_id Int       @id @default(autoincrement())
+  store_id    Int       @db.SmallInt
+  first_name  String    @db.VarChar(45)
+  last_name   String    @db.VarChar(45)
+  email       String?   @db.VarChar(50)
+  address_id  Int       @db.SmallInt
+  activebool  Boolean   @default(true)
+  create_date DateTime  @default(dbgenerated("('now'::text)::date")) @db.Date
+  last_update DateTime? @default(now()) @db.Timestamp(6)
+  active      Int?
+  address     address   @relation(fields: [address_id], references: [address_id])
+  payment     payment[]
+  rental      rental[]
+
+  @@index([address_id], map: "idx_fk_address_id")
+  @@index([store_id], map: "idx_fk_store_id")
+  @@index([last_name], map: "idx_last_name")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model da_audit {
+  id             Int       @id @default(autoincrement())
+  belong_to      String    @db.VarChar(50)
+  csv            Int
+  collect        Int
+  collect_upload Int
+  upload_file    String    @db.VarChar(100)
+  upload_by      String    @db.VarChar(100)
+  upload_user    String    @db.VarChar(50)
+  upload_time    DateTime? @db.Timestamptz(6)
+  audit_file     String    @db.VarChar(100)
+  audit_by       String    @db.VarChar(100)
+  audit_user     String?   @db.VarChar(50)
+  audit_time     DateTime? @db.Timestamptz(6)
+  status         String?   @default("processing") @db.VarChar(50)
+  message        String?   @db.VarChar(200)
+  da_csv         da_csv    @relation(fields: [csv], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model da_collect {
+  id                Int                 @id @default(autoincrement())
+  belong_to         String              @db.VarChar(50)
+  csv               Int
+  tag               String              @db.VarChar(50)
+  comment           String?
+  start_date        DateTime?           @db.Date
+  end_date          DateTime?           @db.Date
+  enable            Boolean?            @default(true)
+  group_by          String?             @db.VarChar(50)
+  group_list        Json?               @db.Json
+  import_time       DateTime?           @default(now()) @db.Timestamptz(6)
+  last_upload_time  String?             @db.VarChar(20)
+  audit_enable      Boolean?            @default(false)
+  audit_by_col      String?             @db.VarChar(50)
+  da_csv            da_csv              @relation(fields: [csv], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  da_collect_upload da_collect_upload[]
+
+  @@unique([belong_to, csv, tag], map: "da_collect_template_branch_tag")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model da_collect_upload {
+  id          Int        @id @default(autoincrement())
+  csv         Int
+  tag         String     @db.VarChar(50)
+  collect     Int
+  upload_by   String     @db.VarChar(100)
+  files       Json?
+  history     Json?
+  enable      Boolean?   @default(true)
+  belong_to   String?    @default("KP") @db.VarChar(100)
+  multifile   Boolean?   @default(false)
+  upload_time String?    @default(dbgenerated("((history -> 0) ->> 'date'::text)")) @db.VarChar(50)
+  status      Int?       @default(0) @db.SmallInt
+  da_collect  da_collect @relation(fields: [collect], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  da_csv      da_csv     @relation(fields: [csv], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([collect, upload_by], map: "da_collect_upload__by")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model da_csv {
+  id                Int                 @id(map: "sync_csv_pkey") @default(autoincrement())
+  name              String              @db.VarChar(50)
+  belong_to         String              @db.VarChar(50)
+  comment           String?
+  def               Json?
+  enable            Boolean?            @default(true)
+  history           Json?
+  editable          Boolean?            @default(true)
+  files             Json?
+  accept_format     String?             @default("*") @db.VarChar(50)
+  multifile         Boolean?            @default(true)
+  group_name        String?             @db.VarChar(50)
+  copy_to           String?             @db.VarChar(100)
+  exe_after_upload  String?             @db.VarChar(100)
+  tags              Json?
+  da_audit          da_audit[]
+  da_collect        da_collect[]
+  da_collect_upload da_collect_upload[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model da_download {
+  id               Int       @id @default(autoincrement())
+  belong_to        String    @db.VarChar(50)
+  name             String?   @db.VarChar(50)
+  comment          String?
+  sql              String?
+  split_by         String[]  @default([]) @db.VarChar(50)
+  auth_by          String?   @db.VarChar(50)
+  generate_time    DateTime? @db.Timestamptz(6)
+  enable           Boolean?  @default(true)
+  files            Json?
+  convert_to_xlsx  Boolean?  @default(false)
+  file_name_suffix String?   @db.VarChar(50)
+}
+
+model da_file {
+  id      Int       @id @default(autoincrement())
+  name    String    @db.VarChar(50)
+  path    String    @db.VarChar(50)
+  comment String?
+  url     String    @db.VarChar(200)
+  time    DateTime? @default(now()) @db.Timestamptz(6)
+  enable  Boolean?  @default(true)
+}
+
+model da_run {
+  id       Int       @id @default(autoincrement())
+  url      String    @db.VarChar(50)
+  params   String?
+  run_time Int?
+  user     String?   @db.VarChar(50)
+  last_run DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@unique([url, params], map: "da_run_url_paramss")
+}
+
+model da_sql {
+  id        Int      @id @default(autoincrement())
+  belong_to String   @db.VarChar(50)
+  order_no  String?  @db.VarChar(10)
+  name      String?  @db.VarChar(50)
+  comment   String?
+  sql       String?
+  enable    Boolean? @default(true)
+  type      String?  @default("sql") @db.VarChar(50)
+  schedule  String?  @default("") @db.VarChar(100)
+}
+
+model da_sql_history {
+  id          Int       @id @default(autoincrement())
+  sql_id      Int?
+  sql         String?
+  update_time DateTime? @default(now()) @db.Timestamptz(6)
+  update_user String?   @db.VarChar(50)
+}
+
+model da_sql_run {
+  id             Int       @id @default(autoincrement())
+  belong_to      String    @db.VarChar(50)
+  running        Boolean?  @default(true)
+  run_start_time DateTime? @default(now()) @db.Timestamp(6)
+  run_seconds    Int?
+  run_user       String?   @db.VarChar(50)
+  run_result     Boolean?
+  history        Json?
+  name           String?
+  sql_id         Int?
+
+  @@unique([belong_to, name], map: "da_sql_run_belong_to_name")
+}
+
+model film {
+  film_id          Int                     @id @default(autoincrement())
+  title            String                  @db.VarChar(255)
+  description      String?
+  release_year     Int?
+  language_id      Int                     @db.SmallInt
+  rental_duration  Int                     @default(3) @db.SmallInt
+  rental_rate      Decimal                 @default(4.99) @db.Decimal(4, 2)
+  length           Int?                    @db.SmallInt
+  replacement_cost Decimal                 @default(19.99) @db.Decimal(5, 2)
+  rating           mpaa_rating?            @default(G)
+  last_update      DateTime                @default(now()) @db.Timestamp(6)
+  special_features String[]
+  fulltext         Unsupported("tsvector")
+  language         language                @relation(fields: [language_id], references: [language_id])
+  film_actor       film_actor[]
+  film_category    film_category[]
+  inventory        inventory[]
+
+  @@index([fulltext], type: Gist)
+  @@index([language_id], map: "idx_fk_language_id")
+  @@index([title], map: "idx_title")
+}
+
+model film_actor {
+  actor_id    Int      @db.SmallInt
+  film_id     Int      @db.SmallInt
+  last_update DateTime @default(now()) @db.Timestamp(6)
+  actor       actor    @relation(fields: [actor_id], references: [actor_id])
+  film        film     @relation(fields: [film_id], references: [film_id])
+
+  @@id([actor_id, film_id])
+  @@index([film_id], map: "idx_fk_film_id")
+}
+
+model film_category {
+  film_id     Int      @db.SmallInt
+  category_id Int      @db.SmallInt
+  last_update DateTime @default(now()) @db.Timestamp(6)
+  category    category @relation(fields: [category_id], references: [category_id])
+  film        film     @relation(fields: [film_id], references: [film_id])
+
+  @@id([film_id, category_id])
+}
+
+model inventory {
+  inventory_id Int      @id @default(autoincrement())
+  film_id      Int      @db.SmallInt
+  store_id     Int      @db.SmallInt
+  last_update  DateTime @default(now()) @db.Timestamp(6)
+  film         film     @relation(fields: [film_id], references: [film_id])
+  store        store    @relation(fields: [store_id], references: [store_id], onDelete: Cascade, onUpdate: NoAction, map: "inventory_store_store_id_fk")
+  rental       rental[]
+
+  @@index([store_id, film_id], map: "idx_store_id_film_id")
+}
+
+model language {
+  language_id Int      @id @default(autoincrement())
+  name        String   @db.Char(20)
+  last_update DateTime @default(now()) @db.Timestamp(6)
+  film        film[]
+}
+
+model payment {
+  payment_id   Int      @id @default(autoincrement())
+  customer_id  Int      @db.SmallInt
+  staff_id     Int      @db.SmallInt
+  rental_id    Int
+  amount       Decimal  @db.Decimal(5, 2)
+  payment_date DateTime @db.Timestamp(6)
+  customer     customer @relation(fields: [customer_id], references: [customer_id])
+  rental       rental   @relation(fields: [rental_id], references: [rental_id], onDelete: SetNull)
+  staff        staff    @relation(fields: [staff_id], references: [staff_id])
+
+  @@index([customer_id], map: "idx_fk_customer_id")
+  @@index([rental_id], map: "idx_fk_rental_id")
+  @@index([staff_id], map: "idx_fk_staff_id")
+}
+
+model rental {
+  rental_id    Int       @id @default(autoincrement())
+  rental_date  DateTime  @db.Timestamp(6)
+  inventory_id Int
+  customer_id  Int       @db.SmallInt
+  return_date  DateTime? @db.Timestamp(6)
+  staff_id     Int       @db.SmallInt
+  last_update  DateTime  @default(now()) @db.Timestamp(6)
+  payment      payment[]
+  customer     customer  @relation(fields: [customer_id], references: [customer_id])
+  inventory    inventory @relation(fields: [inventory_id], references: [inventory_id])
+  staff        staff     @relation(fields: [staff_id], references: [staff_id], onDelete: NoAction, onUpdate: NoAction, map: "rental_staff_id_key")
+
+  @@unique([rental_date, inventory_id, customer_id], map: "idx_unq_rental_rental_date_inventory_id_customer_id")
+  @@index([inventory_id], map: "idx_fk_inventory_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model rp_adjust {
+  id               Int       @id(map: "id") @default(autoincrement())
+  month            String    @db.VarChar(50)
+  from_branch      String    @db.VarChar(50)
+  to_branch        String    @db.VarChar(50)
+  data             Json?
+  data_prod        Json?
+  adjust_time      DateTime? @default(now()) @db.Timestamptz(6)
+  adjust_user      String?   @db.VarChar(50)
+  audit_time       DateTime? @db.Timestamptz(6)
+  audit_user       String?   @db.VarChar(50)
+  status           Int?      @default(0)
+  comment          String?
+  from_branch_code String?   @db.VarChar(50)
+  to_branch_code   String?   @db.VarChar(50)
+
+  @@unique([month, from_branch, to_branch], map: "month_branch")
+}
+
+model rp_area {
+  area      String  @db.VarChar(255)
+  sub_area  String  @db.VarChar(255)
+  month     String  @db.VarChar(255)
+  file      Json?
+  status    Int?    @db.SmallInt
+  area_code String? @db.VarChar(50)
+
+  @@id([area, sub_area, month], map: "key_name")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model rp_branch {
+  branch       String  @db.VarChar(255)
+  month        String  @db.VarChar(255)
+  bpc_file     String? @db.VarChar(255)
+  sap_file     String? @db.VarChar(255)
+  sub_area     String? @db.VarChar(255)
+  area         String? @db.VarChar(255)
+  status       Int?    @db.SmallInt
+  adjust_file  String? @db.VarChar(255)
+  area_code    String? @db.VarChar(50)
+  branch_code  String? @db.VarChar(50)
+  branch_index BigInt?
+  branch_name  String? @db.VarChar(200)
+
+  @@id([branch, month])
+}
+
+model rp_data {
+  id          Int       @id(map: "rp_adjust_sum_pkey") @default(autoincrement())
+  branch      String    @db.VarChar(255)
+  branch_code String?   @db.VarChar(50)
+  year        String    @db.Char(4)
+  month       String    @db.Char(6)
+  adjust_type String?   @db.VarChar(100)
+  adjust_data Json?
+  adjust_time DateTime? @default(now()) @db.Timestamptz(6)
+  adjust_user String?   @db.VarChar(100)
+
+  @@unique([branch, year, month, adjust_type], map: "rp_adjust_sum_unique")
+}
+
+model staff {
+  staff_id    Int       @id @default(autoincrement())
+  first_name  String    @db.VarChar(45)
+  last_name   String    @db.VarChar(45)
+  address_id  Int       @db.SmallInt
+  email       String?   @db.VarChar(50)
+  store_id    Int       @db.SmallInt
+  active      Boolean   @default(true)
+  username    String    @db.VarChar(16)
+  password    String?   @db.VarChar(40)
+  last_update DateTime  @default(now()) @db.Timestamp(6)
+  picture     Bytes?
+  payment     payment[]
+  rental      rental[]
+  address     address   @relation(fields: [address_id], references: [address_id])
+  store       store?
+}
+
+model store {
+  store_id         Int         @id @default(autoincrement())
+  manager_staff_id Int         @unique(map: "idx_unq_manager_staff_id") @db.SmallInt
+  address_id       Int         @db.SmallInt
+  last_update      DateTime    @default(now()) @db.Timestamp(6)
+  inventory        inventory[]
+  address          address     @relation(fields: [address_id], references: [address_id])
+  staff            staff       @relation(fields: [manager_staff_id], references: [staff_id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sync_column {
+  id             Int           @id @default(autoincrement())
+  database_id    Int
+  table_id       Int
+  database_name  String        @db.VarChar(50)
+  table_name     String        @db.VarChar(50)
+  column_name    String        @db.VarChar(50)
+  column_comment String?
+  is_add         Boolean       @default(false)
+  is_update      Boolean       @default(false)
+  last_update    DateTime      @default(now()) @db.Timestamp(6)
+  sync_database  sync_database @relation(fields: [database_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sync_table     sync_table    @relation(fields: [table_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sync_database {
+  id               Int           @id @default(autoincrement())
+  database_name    String        @unique @db.VarChar(50)
+  database_comment String?
+  last_update      DateTime      @default(now()) @db.Timestamp(6)
+  sqls             String?
+  sync_column      sync_column[]
+  sync_table       sync_table[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sync_exchange {
+  id      Int      @id @default(autoincrement())
+  name    String   @db.VarChar(50)
+  comment String?
+  def     Json?
+  enable  Boolean? @default(true)
+  result  Json?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sync_export {
+  id                          Int      @id @default(autoincrement())
+  name                        String   @db.VarChar(50)
+  src_db                      String   @db.VarChar(50)
+  src_tables                  String[] @default([]) @db.VarChar(50)
+  target_datax_web_datasource String?  @db.VarChar(50)
+  comment                     String?
+  enable                      Boolean? @default(true)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sync_extend {
+  id       Int      @id @default(autoincrement())
+  name     String   @db.VarChar(50)
+  comment  String?
+  def      Json?
+  enable   Boolean? @default(true)
+  order_no String?  @db.VarChar(10)
+  result   Json?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sync_import {
+  id                          Int      @id @default(autoincrement())
+  name                        String   @db.VarChar(50)
+  target_host                 String?  @db.VarChar(50)
+  target_db                   String?  @db.VarChar(50)
+  target_table                String   @db.VarChar(50)
+  source_datax_web_datasource String?  @db.VarChar(50)
+  source_type                 String?  @db.VarChar(50)
+  source_sql                  String?
+  comment                     String?
+  enable                      Boolean? @default(true)
+  key_field                   String?  @db.VarChar(50)
+  auto_create_table           Boolean? @default(true)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sync_job_log {
+  id            Int       @id @default(autoincrement())
+  job_log_id    BigInt?
+  job_id        Int?
+  job_desc      String?   @db.VarChar(255)
+  trigger_time  DateTime? @db.Timestamp(6)
+  handle_time   DateTime? @db.Timestamp(6)
+  database_name String?   @db.VarChar(50)
+  table_name    String?   @db.VarChar(50)
+  status        Boolean?
+  start_time    DateTime? @db.Timestamp(6)
+  end_time      DateTime? @db.Timestamp(6)
+  seconds       Int?
+  records       BigInt?
+  job_type      String    @default(dbgenerated("split_part((job_desc)::text, ':'::text, 1)")) @db.VarChar(50)
+  user          String?   @db.VarChar(50)
+  log_file      String?   @db.VarChar(100)
+  error         String?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sync_model {
+  id       Int      @id @default(autoincrement())
+  name     String   @db.VarChar(50)
+  base_sql String?
+  def      Json?
+  enable   Boolean? @default(true)
+  order_no String?  @db.VarChar(10)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sync_report {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(50)
+  comment   String?
+  schema    Json?
+  def       Json?
+  enable    Boolean? @default(true)
+  belong_to String?  @default("dp_bi") @db.VarChar(10)
+  snapshot  Int?     @default(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sync_split {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(50)
+  comment      String?
+  split_tables Json?
+  enable       Boolean? @default(true)
+  charts       Json?
+  users        Json?
+  collect      Json?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sync_table {
+  id               Int           @id @default(autoincrement())
+  database_id      Int
+  database_name    String        @db.VarChar(50)
+  table_name       String        @db.VarChar(50)
+  sqls_file        String?       @db.VarChar(50)
+  table_comment    String?
+  records          Int?
+  sync_seconds     Int?
+  last_update      DateTime      @default(now()) @db.Timestamp(6)
+  table_meta_cache Json?
+  job              Json?
+  sync_column      sync_column[]
+  sync_database    sync_database @relation(fields: [database_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([database_id, table_name], map: "database_table_name_unique")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model test {
+  name  String? @db.VarChar(255)
+  name2 String? @db.VarChar(255)
+  name3 String? @db.VarChar(255)
+  name4 String? @db.VarChar(255)
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model v_da_collect_upload {
+  template       String? @db.VarChar(50)
+  tag            String? @db.VarChar(50)
+  branch         String? @db.VarChar(100)
+  url            String?
+  rows           Int?
+  user           String?
+  file_name      String?
+  upload_time    String?
+  upload_seconds Int?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model v_da_csv_enums {
+  template String? @db.VarChar(50)
+  col      String?
+  enum     String?
+
+  @@ignore
+}
+
+enum mpaa_rating {
+  G
+  PG
+  PG_13 @map("PG-13")
+  R
+  NC_17 @map("NC-17")
+}
